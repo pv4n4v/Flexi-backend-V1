@@ -5,19 +5,7 @@ const jwt = require('jsonwebtoken');
 
 const router = express.Router();
 
-// ✅ Middleware to Verify Token (For Protected Routes)
-const verifyToken = (req, res, next) => {
-    const token = req.header('Authorization');
-    if (!token) return res.status(401).json({ error: 'Access denied. No token provided.' });
-
-    try {
-        const decoded = jwt.verify(token.split(' ')[1], 'your_jwt_secret'); // Extract token after "Bearer "
-        req.user = decoded; // Add decoded user data to request
-        next();
-    } catch (err) {
-        res.status(400).json({ error: 'Invalid token.' });
-    }
-};
+const verifyToken = require('../middleware/verifyToken');
 
 // ✅ Register API
 router.post('/register', async (req, res) => {
@@ -72,7 +60,8 @@ router.post('/login', async (req, res) => {
         }
 
         // Generate JWT token
-        const token = jwt.sign({ id: user.id, email: user.email }, 'your_jwt_secret', { expiresIn: '1h' });
+        const token = jwt.sign({ id: user.id, email: user.email }, process.env.JWT_SECRET, { expiresIn: '1h' });
+
 
         res.status(200).json({ message: 'Login successful', token });
     } catch (err) {
@@ -102,8 +91,4 @@ router.get('/profile', verifyToken, async (req, res) => {
 
 module.exports = router;
 
-// add at the end of authRoutes.js
-module.exports = {
-    router,
-    verifyToken
-};
+
