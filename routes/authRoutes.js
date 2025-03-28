@@ -6,13 +6,15 @@ const jwt = require('jsonwebtoken');
 const router = express.Router();
 
 const verifyToken = require('../middleware/verifyToken');
+require('dotenv').config();
+
 
 // ✅ Register API
 router.post('/register', async (req, res) => {
     const { name, email, password } = req.body;
 
     // ✅ Check if all fields are provided
-    if (!name || !email || !password) {
+    if (!name || !email || !password ) {
         return res.status(400).json({ error: "All fields (name, email, password) are required." });
     }
 
