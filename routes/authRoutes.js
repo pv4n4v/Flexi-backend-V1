@@ -9,26 +9,34 @@ const verifyToken = require('../middleware/verifyToken');
 require('dotenv').config();
 
 
-// ✅ Register API
+// ✅ Register API with extra fields
 router.post('/register', async (req, res) => {
-    const { name, email, password } = req.body;
+    const { name, email, password, confirmPassword, phone, address, gender, dob } = req.body;
 
-    // ✅ Check if all fields are provided
-    if (!name || !email || !password ) {
-        return res.status(400).json({ error: "All fields (name, email, password) are required." });
+    // ✅ Check for required fields
+    if (!name || !email || !password || !confirmPassword || !phone || !address || !gender || !dob) {
+        return res.status(400).json({ error: "All fields are required." });
+    }
+
+    // ✅ Check if passwords match
+    if (password !== confirmPassword) {
+        return res.status(400).json({ error: "Passwords do not match." });
     }
 
     try {
-        // Hash the password before storing it
+        // Hash the password
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        // Insert user into the database
+        // Insert user into database
         const [result] = await db.execute(
-            `INSERT INTO users (name, email, password) VALUES (?, ?, ?)`,
-            [name, email, hashedPassword]
+            `INSERT INTO users (name, email, password, phone, address, gender, dob) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+            [name, email, hashedPassword, phone, address, gender, dob]
         );
 
-        res.status(201).json({ message: 'User registered successfully', user: { id: result.insertId, name, email } });
+        res.status(201).json({
+            message: 'User registered successfully',
+            user: { id: result.insertId, name, email }
+        });
     } catch (err) {
         if (err.code === 'ER_DUP_ENTRY') {
             return res.status(400).json({ error: 'Email is already in use. Please log in instead.' });
@@ -36,6 +44,7 @@ router.post('/register', async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 });
+
 
 // ✅ Login API
 router.post('/login', async (req, res) => {
