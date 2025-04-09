@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const morgan = require('morgan');
 require('dotenv').config();
 const db = require('./db'); // Ensure database connection is correct
 
@@ -9,6 +10,8 @@ const app = express();
 // Middleware
 app.use(cors());
 app.use(express.json());  // ✅ Required for JSON parsing
+app.use(morgan('dev'));
+
 
 // Import Routes
 const authRoutes = require('./routes/authRoutes');
