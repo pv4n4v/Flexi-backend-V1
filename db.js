@@ -33,8 +33,8 @@ const mysql = require('mysql2/promise');
 const db = mysql.createPool({
     host: 'localhost',
     user: 'root',
-    password: 'Manvi@123',
-    database: 'flexi_m'
+    password: 'Pranav@123',
+    database: 'flexi_app'
 });
 
 module.exports = db;

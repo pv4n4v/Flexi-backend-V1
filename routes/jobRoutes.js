@@ -109,3 +109,25 @@ router.get('/accepted', verifyToken, async (req, res) => {
 
 
 module.exports = router;
+
+router.put('/:id', verifyToken, async (req, res) => {
+    const jobId = req.params.id;
+    const { title, description, wage, location, status } = req.body;
+  
+    try {
+      const [result] = await db.execute(
+        `UPDATE jobs SET title = ?, description = ?, wage = ?, location = ?, status = ? WHERE id = ? AND employer_id = ?`,
+        [title, description, wage, location, status, jobId, req.user.id]
+      );
+  
+      if (result.affectedRows === 0) {
+        return res.status(404).json({ error: 'Job not found or unauthorized update' });
+      }
+  
+      res.status(200).json({ message: 'Job updated successfully' });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  });
+  
+  module.exports = router;
