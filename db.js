@@ -27,14 +27,14 @@ db.getConnection()
 module.exports = db;*/
 
 
-
+require('dotenv').config();
 const mysql = require('mysql2/promise');
 
 const db = mysql.createPool({
     host: 'localhost',
     user: 'root',
-    password: 'Pranav@123',
-    database: 'flexi_app'
+    password: 'Manvi@123',
+    database: 'flexi_m'
 });
 
 module.exports = db;
